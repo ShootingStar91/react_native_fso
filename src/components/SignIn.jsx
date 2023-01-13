@@ -6,7 +6,7 @@ import * as yup from "yup";
 import { useSignIn } from "../hooks/useSignIn";
 import { useNavigate } from "react-router-native";
 
-const styles = StyleSheet.create({
+export const styles = StyleSheet.create({
   container: {
     backgroundColor: "white",
     padding: 20,
@@ -52,13 +52,17 @@ const SignIn = () => {
     try {
       const { data } = await signIn({ username, password });
       if (data) {
-        navigate('/')
+        navigate("/");
       }
     } catch (e) {
       console.log(e);
     }
   };
 
+  return <SignInContainer onSubmit={onSubmit} />;
+};
+
+export const SignInContainer = ({ onSubmit }) => {
   return (
     <View style={styles.container}>
       <Formik
@@ -94,3 +98,4 @@ const SignInForm = ({ onSubmit }) => {
 };
 
 export default SignIn;
+

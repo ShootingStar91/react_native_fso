@@ -1,5 +1,8 @@
-import React, { Image, StyleSheet, View } from "react-native";
+import React, { Pressable, Image, StyleSheet, View } from "react-native";
 import Text from "./Text";
+import { styles as importedStyles } from "./SignIn";
+import * as Linking from "expo-linking";
+import { useNavigate } from "react-router-native";
 
 const styles = StyleSheet.create({
   image: {
@@ -19,7 +22,7 @@ const styles = StyleSheet.create({
   header: {
     marginLeft: 15,
     display: "flex",
-    flexGrow: 0
+    flexGrow: 0,
   },
   headerItem: {
     padding: 3,
@@ -34,6 +37,8 @@ const styles = StyleSheet.create({
     padding: 5,
     paddingHorizontal: 30,
   },
+  button: importedStyles.button,
+  buttonText: importedStyles.buttonText,
 });
 
 const formatNumber = (number) => {
@@ -44,16 +49,46 @@ const formatNumber = (number) => {
   return number;
 };
 
-const RepositoryItem = ({ item }) => {
+const RepositoryItem = ({ item, fullView }) => {
+  console.log({item, fullView})
+  
+  const navigate = useNavigate();
+  const onPress = () => {
+    console.log("onClick")
+    if (fullView) {
+      return;
+    }
+    console.log({item}, {fullView});
+    navigate('/repository/' + item.id)
+  }
+  if (!item) {
+    return null;
+  }
+  const pressableProps = fullView ? {} : {onPress}
   return (
-    <View testID="repositoryItem" style={styles.container}>
-      <View style={styles.headerContainer}>
-        <Header item={item} />
+    <Pressable {...pressableProps}>
+      <View testID="repositoryItem" style={styles.container}>
+        <View style={styles.headerContainer}>
+          <Header item={item} />
+        </View>
+        <View style={styles.stats}>
+          <Stats item={item} />
+        </View>
+        {fullView && <OpenButton item={item} />}
       </View>
-      <View style={styles.stats}>
-        <Stats item={item} />
-      </View>
-    </View>
+    </Pressable>
+  );
+};
+
+const OpenButton = ({ item }) => {
+  const onPress = () => {
+    console.log("OpenButton.onPress", {item})
+    Linking.openURL(item.url)
+  }
+  return (
+    <Pressable onPress={onPress} style={styles.button}>
+      <Text style={styles.buttonText}>Open in GitHub</Text>
+    </Pressable>
   );
 };
 
@@ -65,7 +100,10 @@ const Header = ({ item }) => {
         <Text fontWeight="bold" style={styles.headerItem}>
           {item.fullName}
         </Text>
-        <Text color="textSecondary" style={{...styles.headerItem, paddingRight: 50}}>
+        <Text
+          color="textSecondary"
+          style={{ ...styles.headerItem, paddingRight: 50 }}
+        >
           {item.description}
         </Text>
         <View style={styles.headerItem}>

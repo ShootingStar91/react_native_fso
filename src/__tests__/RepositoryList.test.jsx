@@ -1,5 +1,6 @@
-import { render } from "@testing-library/react-native";
+import { render, fireEvent, waitFor } from "@testing-library/react-native";
 import { RepositoryListContainer } from "../components/RepositoryList";
+import { SignInContainer } from "../components/SignIn";
 
 /* eslint-disable jest/expect-expect */
 describe("RepositoryList", () => {
@@ -54,11 +55,29 @@ describe("RepositoryList", () => {
       const repositoryItems = getAllByTestId("repositoryItem");
       const [firstItem, secondItem] = repositoryItems;
       debug();
-      
+
       expect(firstItem).toHaveTextContent("jaredpalmer/formik");
       expect(secondItem).toHaveTextContent("Flexible promise-based");
-      
+    });
+  });
+});
 
+describe("SignInContainer", () => {
+  it("calls the onSubmit handler with correct parameters", async () => {
+    const onSubmit = jest.fn();
+    const { getByPlaceholderText, getByText } = render(
+      <SignInContainer onSubmit={onSubmit} />
+    );
+
+    fireEvent.changeText(getByPlaceholderText("Username"), "kalle");
+    fireEvent.changeText(getByPlaceholderText("Password"), "password");
+    fireEvent.press(getByText("Sign in"));
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledTimes(1);
+      expect(onSubmit.mock.calls[0][0]).toEqual({
+        username: "kalle",
+        password: "password",
+      });
     });
   });
 });
