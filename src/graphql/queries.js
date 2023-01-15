@@ -35,13 +35,61 @@ query Repository($repositoryId: ID!) {
       fullName
       ratingAverage
       reviewCount
+      
       stargazersCount
       forksCount
       url
       ownerAvatarUrl
       description
       language
+    reviews {
+      totalCount
+      pageInfo {
+        hasPreviousPage
+        hasNextPage
+        startCursor
+        endCursor
+      }
+      edges {
+        cursor
+        node {
+          id
+          user {
+            id
+            username
+            createdAt
+            reviews {
+              totalCount
+            }
+            reviewCount
+          }
+          repository {
+            id
+            ownerName
+            name
+            createdAt
+            fullName
+            ratingAverage
+            reviewCount
+            stargazersCount
+            watchersCount
+            forksCount
+            openIssuesCount
+            url
+            ownerAvatarUrl
+            description
+            language
+            userHasReviewed
+          }
+          userId
+          repositoryId
+          rating
+          createdAt
+          text
+        }
+      }
     }
+  }
   }
 
 
