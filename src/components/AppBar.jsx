@@ -35,6 +35,7 @@ const AppBar = () => {
     authStorage.removeAccessToken();
     apolloClient.resetStore();
   };
+
   console.log({ data });
 
   return (
@@ -43,11 +44,11 @@ const AppBar = () => {
         <Link to="/">
           <Text style={styles.header}>Repositories</Text>
         </Link>
-        {data?.me ? (
+        {data?.me && (
           <Link to="/createreview/">
             <Text style={styles.header}>Create a review</Text>
           </Link>
-        ) : null}
+        )}
         {!data?.me ? (
           <Link to="/signin">
             <Text style={styles.header}>Sign in</Text>
@@ -56,6 +57,11 @@ const AppBar = () => {
           <Pressable onPress={signOut} to="/signout">
             <Text style={styles.header}>Sign out</Text>
           </Pressable>
+        )}
+        {!data?.me && (
+          <Link to="/signup">
+            <Text style={styles.header}>Sign up</Text>
+          </Link>
         )}
       </ScrollView>
     </View>
