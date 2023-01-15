@@ -31,18 +31,23 @@ const AppBar = () => {
   const authStorage = useAuthStorage();
 
   const signOut = () => {
-    console.log("signOut")
+    console.log("signOut");
     authStorage.removeAccessToken();
     apolloClient.resetStore();
   };
-  console.log({data})
-  
+  console.log({ data });
+
   return (
     <View style={styles.container}>
       <ScrollView horizontal>
         <Link to="/">
           <Text style={styles.header}>Repositories</Text>
         </Link>
+        {data?.me ? (
+          <Link to="/createreview/">
+            <Text style={styles.header}>Create a review</Text>
+          </Link>
+        ) : null}
         {!data?.me ? (
           <Link to="/signin">
             <Text style={styles.header}>Sign in</Text>

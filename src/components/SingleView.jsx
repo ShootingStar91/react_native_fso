@@ -81,9 +81,10 @@ export const SingleView = () => {
 const Review = ({ review }) => {
   console.log({ review });
   const rawDate = new Date(Date.parse(review.createdAt));
-  console.log(rawDate);
+  console.log({revieDate: review.createdAt})
+  console.log({parsedDate: rawDate});
   const date =
-    rawDate.getDay() + "." + rawDate.getMonth() + "." + rawDate.getFullYear();
+    rawDate.getDate() + "." + (rawDate.getMonth() + 1) + "." + rawDate.getFullYear();
   return (
     <View style={styles.container}>
       <View style={styles.ratingContainer}>
