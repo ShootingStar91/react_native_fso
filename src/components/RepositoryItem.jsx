@@ -50,8 +50,7 @@ const formatNumber = (number) => {
 };
 
 const RepositoryItem = ({ item, fullView }) => {
-  console.log({item, fullView})
-  
+ 
   const navigate = useNavigate();
   const onPress = () => {
     console.log("onClick")

@@ -2,14 +2,12 @@ import { FlatList, View, StyleSheet } from "react-native";
 import RepositoryItem from "./RepositoryItem";
 import useRepositories from "../hooks/useRepositories";
 import { useState } from "react";
-import { Menu, Provider, Button } from "react-native-paper";
-import Text from "./Text";
+import { Picker } from "@react-native-picker/picker";
 
 const styles = StyleSheet.create({
   separator: {
     height: 10,
   },
-  headerContainer: {},
   header: {
     display: "flex",
     flexDirection: "row",
@@ -20,50 +18,10 @@ const styles = StyleSheet.create({
   headerItem: {
     display: "flex",
     paddingRight: 10,
+    width: "50%"
+
   },
 });
-
-const ListViewHeader = ({ order, setOrder }) => {
-  const [visible, setVisible] = useState(false);
-
-  const openMenu = () => {
-    console.log("Setting menu visible");
-    setVisible(true);
-  };
-
-  const closeMenu = () => setVisible(false);
-
-  return (
-    <View>
-      <View>
-        <Menu
-          visible={visible}
-          anchor={<Button onPress={openMenu}>Order by</Button>}
-          onDismiss={closeMenu}
-        >
-          <Menu.Item
-            onPress={() =>
-              setOrder({
-                orderBy: "AVERAGE_RATING",
-                orderDirection: order.orderDirection,
-              })
-            }
-            title="Rating"
-          />
-          <Menu.Item
-            onPress={() =>
-              setOrder({
-                orderBy: "CREATED_AT",
-                orderDirection: order.orderDirection,
-              })
-            }
-            title="Created"
-          />
-        </Menu>
-      </View>
-    </View>
-  );
-};
 
 export const ItemSeparator = () => <View style={styles.separator} />;
 
@@ -84,17 +42,42 @@ export const RepositoryListContainer = ({ repositories }) => {
 };
 
 const RepositoryList = () => {
-  const [order, setOrder] = useState({
-    orderBy: "CREATED_AT",
-    orderDirection: "DESC",
-  });
-  const { repositories } = useRepositories(order);
+  const [orderBy, setOrderBy] = useState("CREATED_AT");
+  const [orderDirection, setOrderDirection] = useState("DESC");
+
+  const { repositories } = useRepositories({ orderBy, orderDirection });
 
   console.log({ repositories });
 
   return (
     <View>
-      <ListViewHeader order={order} setOrder={setOrder} />
+      <View style={styles.header}>
+        <View style={styles.headerItem}>
+          <Picker
+            selectedValue={orderBy}
+            onValueChange={(itemValue, itemIndex) => {
+              console.log("Changing orderby to ", itemValue, itemIndex);
+              setOrderBy(itemValue);
+            }}
+          >
+            <Picker.Item label="Rating" value="RATING_AVERAGE" />
+            <Picker.Item label="Date" value="CREATED_AT" />
+          </Picker>
+        </View>
+        <View style={styles.headerItem}>
+          <Picker
+            selectedValue={orderDirection}
+            onValueChange={(itemValue, itemIndex) => {
+              console.log("Changing orderby to ", itemValue, itemIndex);
+              setOrderDirection(itemValue);
+            }}
+          >
+            <Picker.Item label="Descending" value="DESC" />
+            <Picker.Item label="Ascending" value="ASC" />
+          </Picker>
+        </View>
+      </View>
+
       <RepositoryListContainer repositories={repositories} />
     </View>
   );
