@@ -3,6 +3,8 @@ import RepositoryItem from "./RepositoryItem";
 import useRepositories from "../hooks/useRepositories";
 import { useState } from "react";
 import { Picker } from "@react-native-picker/picker";
+import TextInput from "./TextInput";
+import { useDebounce } from 'use-debounce';
 
 const styles = StyleSheet.create({
   separator: {
@@ -44,10 +46,12 @@ export const RepositoryListContainer = ({ repositories }) => {
 const RepositoryList = () => {
   const [orderBy, setOrderBy] = useState("CREATED_AT");
   const [orderDirection, setOrderDirection] = useState("DESC");
+  const [filter, setFilter] = useState("")
+  const [searchKeyword] = useDebounce(filter, 400);
 
-  const { repositories } = useRepositories({ orderBy, orderDirection });
+  const { repositories } = useRepositories({ orderBy, orderDirection, searchKeyword });
 
-  console.log({ repositories });
+  console.log({ filter });
 
   return (
     <View>
@@ -77,7 +81,9 @@ const RepositoryList = () => {
           </Picker>
         </View>
       </View>
-
+      <View style={{paddingLeft: 10, paddingBottom: 10}}>
+          <TextInput style={{fontWeight: "bold"}} onChangeText={(text) => setFilter(text)} placeholder={"Search for..."} />
+        </View>
       <RepositoryListContainer repositories={repositories} />
     </View>
   );
