@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
 
 export const ItemSeparator = () => <View style={styles.separator} />;
 
-export const RepositoryListContainer = ({ repositories }) => {
+export const RepositoryListContainer = ({ repositories, onEndReached }) => {
   const repositoryNodes = repositories
     ? repositories.edges.map((edge) => edge.node)
     : [];
@@ -38,6 +38,7 @@ export const RepositoryListContainer = ({ repositories }) => {
         data={repositoryNodes}
         ItemSeparatorComponent={ItemSeparator}
         renderItem={({ item }) => <RepositoryItem item={item} />}
+        onEndReached={onEndReached}
       />
     </View>
   );
@@ -49,9 +50,15 @@ const RepositoryList = () => {
   const [filter, setFilter] = useState("")
   const [searchKeyword] = useDebounce(filter, 400);
 
-  const { repositories } = useRepositories({ orderBy, orderDirection, searchKeyword });
+  const { repositories, fetchMore } = useRepositories({ orderBy, orderDirection, searchKeyword, first: 8 });
 
   console.log({ filter });
+
+  const onEndReached = () => {
+    console.log({repositories})
+    console.log("End of list reached");
+    fetchMore();
+  }
 
   return (
     <View>
@@ -84,7 +91,7 @@ const RepositoryList = () => {
       <View style={{paddingLeft: 10, paddingBottom: 10}}>
           <TextInput style={{fontWeight: "bold"}} onChangeText={(text) => setFilter(text)} placeholder={"Search for..."} />
         </View>
-      <RepositoryListContainer repositories={repositories} />
+      <RepositoryListContainer repositories={repositories} onEndReached={onEndReached} />
     </View>
   );
 };

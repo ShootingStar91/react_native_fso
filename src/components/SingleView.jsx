@@ -47,44 +47,56 @@ const styles = StyleSheet.create({
     paddingBottom: 2,
     maxWidth: "92%",
     minWidth: 0,
-
   },
 });
 
 export const SingleView = () => {
   const { id } = useParams();
 
-  const { repository } = useRepository(id);
-  console.log("SingleView");
+  const { repository, fetchMore } = useRepository({ repositoryId: id, first: 8 });
 
-  console.log({ repository });
   if (!repository) {
     return null;
   }
+
+  const onEndReached = () => {
+    console.log({repository})
+    console.log("End of reviews reached");
+    fetchMore();
+  }
+  
   const reviewNodes = repository.reviews
     ? repository.reviews.edges.map((edge) => edge.node)
     : [];
+
   console.log({ reviewNodes });
+
   return (
-      <FlatList
-        data={reviewNodes}
-        renderItem={({ item }) => <Review review={item} />}
-        keyExtractor={({ id }) => id}
-        ListHeaderComponent={() => (
-          <View><RepositoryItem item={repository} fullView={true} /><ItemSeparator /></View>
-        )}
-        ItemSeparatorComponent={ItemSeparator}
-      />
+    <FlatList
+      data={reviewNodes}
+      renderItem={({ item }) => <Review review={item} />}
+      keyExtractor={({ id }) => id}
+      ListHeaderComponent={() => (
+        <View>
+          <RepositoryItem item={repository} fullView={true} />
+          <ItemSeparator />
+        </View>
+      )}
+      ItemSeparatorComponent={ItemSeparator}
+      onEndReached={onEndReached}
+    />
   );
 };
 
 const Review = ({ review }) => {
-  console.log({ review });
-  const rawDate = new Date(Date.parse(review.createdAt));
-  console.log({revieDate: review.createdAt})
-  console.log({parsedDate: rawDate});
+  const parsedDate = new Date(Date.parse(review.createdAt));
+
   const date =
-    rawDate.getDate() + "." + (rawDate.getMonth() + 1) + "." + rawDate.getFullYear();
+    parsedDate.getDate() +
+    "." +
+    (parsedDate.getMonth() + 1) +
+    "." +
+    parsedDate.getFullYear();
   return (
     <View style={styles.container}>
       <View style={styles.ratingContainer}>
