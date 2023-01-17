@@ -1,8 +1,20 @@
 import { gql } from "@apollo/client";
 
 export const GET_REPOSITORIES = gql`
-  query Query($orderDirection: OrderDirection, $orderBy: AllRepositoriesOrderBy, $searchKeyword: String, $after: String, $first: Int) {
-    repositories(orderDirection: $orderDirection, orderBy: $orderBy, searchKeyword: $searchKeyword, first: $first, after: $after) {
+  query Query(
+    $orderDirection: OrderDirection
+    $orderBy: AllRepositoriesOrderBy
+    $searchKeyword: String
+    $after: String
+    $first: Int
+  ) {
+    repositories(
+      orderDirection: $orderDirection
+      orderBy: $orderBy
+      searchKeyword: $searchKeyword
+      first: $first
+      after: $after
+    ) {
       edges {
         node {
           id
@@ -42,7 +54,7 @@ export const GET_REPOSITORY = gql`
       ownerAvatarUrl
       description
       language
-      reviews (first: $first, after: $after) {
+      reviews(first: $first, after: $after) {
         totalCount
         pageInfo {
           hasPreviousPage
@@ -94,10 +106,59 @@ export const GET_REPOSITORY = gql`
 `;
 
 export const ME = gql`
-  {
+  query getCurrentUser($includeReviews: Boolean = false) {
     me {
       id
       username
+      reviews @include(if: $includeReviews) {
+          totalCount
+          pageInfo {
+            hasPreviousPage
+            hasNextPage
+            startCursor
+            endCursor
+          }
+          edges {
+            cursor
+            node {
+              id
+              user {
+                id
+                username
+                createdAt
+                reviews {
+                  totalCount
+                }
+                reviewCount
+              }
+              repository {
+                id
+                ownerName
+                name
+                createdAt
+                fullName
+                ratingAverage
+                reviewCount
+                stargazersCount
+                watchersCount
+                forksCount
+                openIssuesCount
+                url
+                ownerAvatarUrl
+                description
+                language
+                userHasReviewed
+              }
+              userId
+              repositoryId
+              rating
+              createdAt
+              text
+            }
+          
+        
+        }
+      }
     }
   }
 `;

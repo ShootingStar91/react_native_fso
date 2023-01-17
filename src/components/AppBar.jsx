@@ -49,6 +49,12 @@ const AppBar = () => {
             <Text style={styles.header}>Create a review</Text>
           </Link>
         )}
+        {data?.me && (
+          <Link to="/myreviews/">
+            <Text style={styles.header}>My reviews</Text>
+          </Link>
+        )}
+
         {!data?.me ? (
           <Link to="/signin">
             <Text style={styles.header}>Sign in</Text>
