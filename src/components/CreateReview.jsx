@@ -42,7 +42,7 @@ export const CreateReview = () => {
   };
 
   return (
-    <View>
+    <View style={styles.container}>
       <Formik
         onSubmit={onSubmit}
         initialValues={{
